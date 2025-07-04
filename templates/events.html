@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Push Events</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta http-equiv="refresh" content="15"> <!-- auto-refresh every 5s -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 40px;
+        }
+
+        .event-card {
+            border-left: 5px solid #0d6efd;
+            background-color: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+            transition: 0.3s ease;
+        }
+
+        .event-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2 class="mb-4 text-center">Latest Events</h2>
+
+        {% for event in events %}
+        {% set dt = event.timestamp if event.timestamp.__class__.__name__ != 'str' else event.timestamp | to_datetime %}
+        {% set day = dt.day %}
+        {% if 11 <= day <=13 %}
+            {% set suffix = 'th' %}
+        {% else %}
+            {% set suffixes = ['th', 'st', 'nd', 'rd'] %}
+            {% set suffix = suffixes[day % 10] if day % 10 in [1,2,3] else 'th' %}
+        {% endif %}
+
+        <div class="event-card rounded">
+            {% if event.event == 'push' %}
+            <p>
+                <strong>{{ event.author }}</strong> pushed to
+                <strong>{{ event.branch }}</strong> on
+                <strong>{{ day }}{{ suffix }} {{ dt.strftime('%B %Y - %I:%M %p') }} UTC</strong>
+            </p>
+
+            {% elif event.event == 'pull_request' %}
+            <p>
+                <strong>{{ event.author }}</strong> submitted a pull request from
+                <strong>{{ event.from_branch }}</strong> to
+                <strong>{{ event.to_branch }}</strong> on
+                <strong>{{ day }}{{ suffix }} {{ dt.strftime('%B %Y - %I:%M %p') }} UTC</strong>
+            </p>
+
+            {% elif event.event == 'merge' %}
+            <p>
+                <strong>{{ event.author }}</strong> merged branch
+                <strong>{{ event.from_branch }}</strong> to
+                <strong>{{ event.to_branch }}</strong> on
+                <strong>{{ day }}{{ suffix }} {{ dt.strftime('%B %Y - %I:%M %p') }} UTC</strong>
+            </p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</body>
+
+</html>
