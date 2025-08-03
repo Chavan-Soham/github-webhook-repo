@@ -1,26 +1,82 @@
------------------------------------------------ **HELLO** ---------------------------------------------
+# GitHub Event Webhook Dashboard
 
-# github-webhook-repo
-This contains code of webhooks
+This project provides a webhook receiver and dashboard for GitHub repository events. It’s designed to capture and store push, pull request, and merge events (such as when a pull request is merged into the master branch), then display them in a user-friendly interface.
 
-I am using ngrok to expose local web servers to the internet, making them accessible through a public URL so that I can use this URL in the Webhook payload URL settings of Github setting of **action-repo** repo.
+## Features
 
-I have named the database as "github-actions". I started the mongo db server using **mongod** command. This is how the data gets stored in the database:
-![image](https://github.com/user-attachments/assets/b20c940e-995b-4283-972f-a418e4835d71)
+- **Webhook Endpoint**: Receives GitHub event payloads for `push` and `pull_request` (including merges).
+- **Event Storage**: Stores event details in a MongoDB database.
+- **Dashboard UI**: Shows recent events with author, branch info, and UTC timestamp.
+- **ngrok Integration**: Easily expose your local server to GitHub using ngrok.
 
-**mongo db server**:
-![image](https://github.com/user-attachments/assets/a19c26d9-6659-4098-aa90-1ee02b270c4d)
+## How It Works
 
-I am using a dummy folder called **output text file** with text files to push into action-repo and test the code. This was my last test for merge:
-![image](https://github.com/user-attachments/assets/2ea782e1-864c-4df1-b532-ea38d5fe1eca)
+1. **Setup webhook in your GitHub repo**: Point it to your ngrok URL (e.g., `https://<subdomain>.ngrok.io/github-webhook`).
+2. **Push and PR events**: When you push or merge pull requests to the master branch, GitHub sends event data to your webhook endpoint.
+3. **Event Handling**:
+    - `push` events: Author, branch, and timestamp are extracted and saved.
+    - `pull_request` events: Details for both opened and merged PRs are processed.
+4. **Dashboard**: Visit `/events` to view the latest activity.
 
-I executed command python app.py and then executed the command ngrok http 5000:
-![image](https://github.com/user-attachments/assets/d0da5770-2a3a-4fac-9722-3827e842aac3)
+## Quick Start
 
+### Prerequisites
 
-This is simple UI using Bootstrap displaying the latest events with author, branches names and to/from and with timestamp UTC.
-![image](https://github.com/user-attachments/assets/ed4d13c7-2f8d-4d1d-9455-ff0094ad3acd)
+- Python 3.x
+- MongoDB
+- ngrok (for public URL)
 
-I have attached my CV and assessment details in the google form link such as action-repo and webhook-repo links.
+### Setup
 
-------------------------------------------------- **THANK YOU** -----------------------------------------------
+1. **Clone the repository:**
+    ```bash
+    git clone https://github.com/Chavan-Soham/github-event-webhook-dashboard.git
+    cd github-event-webhook-dashboard
+    ```
+
+2. **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3. **Start MongoDB:**
+    ```bash
+    mongod
+    ```
+
+4. **Run the Flask app:**
+    ```bash
+    python app.py
+    ```
+
+5. **Expose your local server using ngrok:**
+    ```bash
+    ngrok http 5000
+    ```
+    Use the generated public URL as the webhook URL in your GitHub repo settings.
+
+## Event Data Example
+
+Events are displayed with:
+- Author
+- Source & target branches
+- UTC timestamp
+
+## Folder Structure
+
+- `app.py`: Main Flask application and webhook handler.
+- `templates/events.html`: Dashboard UI.
+- `testing.py`: Sample payloads and test logic.
+- `output text file/`: Example files for testing.
+
+## Screenshots
+
+![Dashboard Example](https://github.com/user-attachments/assets/ed4d13c7-2f8d-4d1d-9455-ff0094ad3acd)
+
+## License
+
+MIT
+
+---
+
+**Thank you for using GitHub Event Webhook Dashboard!**
